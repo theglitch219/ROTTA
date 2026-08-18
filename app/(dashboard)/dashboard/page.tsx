@@ -1,114 +1,162 @@
-"use client"
+'use client'
 
-import React from "react"
-import { useRouter } from "next/navigation"
-import { StatsCard } from '@/components/dashboard/stats-card'
-import { CircleCard } from '@/components/dashboard/circle-card'
-import { AIInsightCard } from '@/components/dashboard/ai-insight-card'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { 
-  Wallet, 
-  Users, 
-  TrendingUp, 
-  Award, 
-  Plus,
-  ArrowRight 
-} from 'lucide-react'
-import { demoUser, demoCircuits, demoAIRecommendations } from '@/lib/data/demo-data'
-import { formatCurrency, formatRelativeTime } from '@/lib/utils'
+import { useSession } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
+import { useEffect } from 'react'
 
-export default function DashboardPage() {
+export default function Dashboard() {
+  const { data: session, status } = useSession()
   const router = useRouter()
-  
-  const recentActivities = [
-    { user: 'Sarah Chen', action: 'contributed', amount: 200, circle: 'Creators Circle', time: '2h ago' },
-    { user: 'David Kim', action: 'contributed', amount: 200, circle: 'Creators Circle', time: '4h ago' },
-    { user: 'System', action: 'payout', amount: 1000, circle: 'Builders Circle', time: '1d ago' },
-  ]
+
+  useEffect(() => {
+    if (status === 'unauthenticated') {
+      router.push('/auth/signin')
+    }
+  }, [status, router])
+
+  if (status === 'loading') {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-[#050705]">
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-[#B6FF00]/20 border-t-[#B6FF00]"></div>
+      </div>
+    )
+  }
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-[#F5F7F5]">Good morning, Alex</h1>
-          <p className="text-sm text-[#8C968F]">Here's your ROTTA overview</p>
-        </div>
-        <Button 
-          className="bg-[#B6FF00] text-[#050705] hover:bg-[#B6FF00]/90"
-          onClick={() => router.push('/circles/create')}
-        >
-          <Plus className="mr-2 h-4 w-4" />
-          Create Circle
-        </Button>
-      </div>
+    <div className="min-h-screen bg-[#050705] p-6">
+      <div className="mx-auto max-w-7xl">
+        <h1 className="text-3xl font-bold text-white">Dashboard</h1>
+        <p className="text-[#8C968F]">Welcome back, {session?.user?.name || 'User'}</p>
 
-      {/* Stats Grid */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <StatsCard
-          title="Portfolio Value"
-          value={formatCurrency(demoUser.portfolio)}
-          change={12.4}
-          icon={Wallet}
-          trend="up"
-        />
-        <StatsCard
-          title="Active Circles"
-          value={demoUser.activeCircles}
-          change={0}
-          icon={Users}
-        />
-        <StatsCard
-          title="Total Contributed"
-          value={formatCurrency(demoUser.totalContributed)}
-          change={8.2}
-          icon={TrendingUp}
-          trend="up"
-        />
-        <StatsCard
-          title="Reliability Score"
-          value={`${demoUser.reliability}%`}
-          change={2.1}
-          icon={Award}
-          trend="up"
-        />
-      </div>
-
-      {/* AI Insight */}
-      <div className="space-y-2">
-        <div className="flex items-center gap-2">
-          <span className="text-sm font-medium text-[#B6FF00]">ROTTA AI</span>
-          <span className="text-xs text-[#8C968F]">• Active</span>
-        </div>
-        <AIInsightCard
-          title={demoAIRecommendations[0].title}
-          description={demoAIRecommendations[0].description}
-          recommendation={demoAIRecommendations[0].recommendation}
-          status={demoAIRecommendations[0].status as any}
-          timestamp={formatRelativeTime(demoAIRecommendations[0].timestamp)}
-        />
-      </div>
-
-      {/* Circles & Activity */}
-      <div className="grid gap-6 lg:grid-cols-3">
-        <div className="lg:col-span-2 space-y-4">
-          <div className="flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-[#F5F7F5]">Active Circles</h2>
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              className="text-[#B6FF00]"
-              onClick={() => router.push('/circles')}
-            >
-              View All <ArrowRight className="ml-1 h-4 w-4" />
-            </Button>
+        {/* Stats */}
+        <div className="mt-8 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          <div className="rounded-xl border border-[#B6FF00]/10 bg-[#0B110D] p-6">
+            <p className="text-sm text-[#8C968F]">Portfolio</p>
+            <p className="text-2xl font-bold text-white">$24,840</p>
+            <p className="text-xs text-[#79D900]">+12.4%</p>
           </div>
-          <div className="grid gap-4 md:grid-cols-2">
-            {demoCircuits.slice(0, 2).map((circle) => (
-              <CircleCard
-                key={circle.id}
-                name={circle.name}
+          <div className="rounded-xl border border-[#B6FF00]/10 bg-[#0B110D] p-6">
+            <p className="text-sm text-[#8C968F]">Active Circles</p>
+            <p className="text-2xl font-bold text-white">3</p>
+            <p className="text-xs text-[#8C968F]">0%</p>
+          </div>
+          <div className="rounded-xl border border-[#B6FF00]/10 bg-[#0B110D] p-6">
+            <p className="text-sm text-[#8C968F]">Total Contributed</p>
+            <p className="text-2xl font-bold text-white">$18,400</p>
+            <p className="text-xs text-[#79D900]">+8.2%</p>
+          </div>
+          <div className="rounded-xl border border-[#B6FF00]/10 bg-[#0B110D] p-6">
+            <p className="text-sm text-[#8C968F]">Reliability</p>
+            <p className="text-2xl font-bold text-[#B6FF00]">94%</p>
+            <p className="text-xs text-[#79D900]">+2.1%</p>
+          </div>
+        </div>
+
+        {/* Circles & Activity */}
+        <div className="mt-8 grid gap-6 lg:grid-cols-3">
+          <div className="lg:col-span-2 space-y-4">
+            <h2 className="text-lg font-semibold text-white">Active Circles</h2>
+            <div className="grid gap-4 md:grid-cols-2">
+              {/* Circle 1 */}
+              <div className="rounded-xl border border-[#B6FF00]/10 bg-[#0B110D] p-4 hover:border-[#B6FF00]/30">
+                <div className="flex items-center justify-between">
+                  <h3 className="font-semibold text-white">Creators Circle</h3>
+                  <span className="rounded-full bg-[#79D900]/20 px-2 py-0.5 text-xs text-[#79D900]">
+                    Healthy
+                  </span>
+                </div>
+                <div className="mt-4 space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-[#8C968F]">Progress</span>
+                    <span className="text-white">83%</span>
+                  </div>
+                  <div className="h-1.5 w-full rounded-full bg-[#111A14]">
+                    <div className="h-1.5 rounded-full bg-[#B6FF00]" style={{ width: '83%' }} />
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-[#8C968F]">Treasury</span>
+                    <span className="text-white">$12,480</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-[#8C968F]">Members</span>
+                    <span className="text-white">8</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Circle 2 */}
+              <div className="rounded-xl border border-[#B6FF00]/10 bg-[#0B110D] p-4 hover:border-[#B6FF00]/30">
+                <div className="flex items-center justify-between">
+                  <h3 className="font-semibold text-white">Builders Circle</h3>
+                  <span className="rounded-full bg-amber-500/20 px-2 py-0.5 text-xs text-amber-500">
+                    Attention
+                  </span>
+                </div>
+                <div className="mt-4 space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-[#8C968F]">Progress</span>
+                    <span className="text-white">82%</span>
+                  </div>
+                  <div className="h-1.5 w-full rounded-full bg-[#111A14]">
+                    <div className="h-1.5 rounded-full bg-amber-500" style={{ width: '82%' }} />
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-[#8C968F]">Treasury</span>
+                    <span className="text-white">$8,240</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-[#8C968F]">Members</span>
+                    <span className="text-white">6</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Activity Feed */}
+          <div className="space-y-4">
+            <h2 className="text-lg font-semibold text-white">Recent Activity</h2>
+            <div className="rounded-xl border border-[#B6FF00]/10 bg-[#0B110D] p-4">
+              <div className="flex items-center gap-3 border-b border-[#B6FF00]/5 py-3">
+                <div className="h-8 w-8 rounded-full bg-[#111A14] flex items-center justify-center">
+                  <span className="text-xs text-[#8C968F]">S</span>
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm text-white">
+                    <span className="font-medium">Sarah Chen</span> Contributed $200
+                  </p>
+                  <p className="text-xs text-[#8C968F]">2h ago</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3 border-b border-[#B6FF00]/5 py-3">
+                <div className="h-8 w-8 rounded-full bg-[#111A14] flex items-center justify-center">
+                  <span className="text-xs text-[#8C968F]">D</span>
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm text-white">
+                    <span className="font-medium">David Kim</span> Contributed $200
+                  </p>
+                  <p className="text-xs text-[#8C968F]">4h ago</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3 py-3">
+                <div className="h-8 w-8 rounded-full bg-[#111A14] flex items-center justify-center">
+                  <span className="text-xs text-[#8C968F]">S</span>
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm text-white">
+                    <span className="font-medium">System</span> Payout $1,000
+                  </p>
+                  <p className="text-xs text-[#8C968F]">1d ago</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}                name={circle.name}
                 total={circle.total}
                 target={circle.target}
                 progress={circle.progress}
