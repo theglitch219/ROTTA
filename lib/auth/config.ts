@@ -48,3 +48,25 @@ export const authOptions: NextAuthOptions = {
   },
   secret: process.env.NEXTAUTH_SECRET || "rotta-secret-key-change-in-production",
 }
+declare module "next-auth" {
+  interface User {
+    wallet?: string
+  }
+
+  interface Session {
+    user: {
+      id?: string
+      wallet?: string
+      name?: string | null
+      email?: string | null
+      image?: string | null
+    }
+  }
+}
+
+declare module "next-auth/jwt" {
+  interface JWT {
+    id?: string
+    wallet?: string
+  }
+}
