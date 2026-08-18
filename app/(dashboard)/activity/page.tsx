@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button"
 import { formatRelativeTime } from "@/lib/utils"
 import { RefreshCw, Filter } from "lucide-react"
 
-// Exten
 const initialActivities = [
   { id: 1, user: 'Sarah Chen', action: 'Contributed', amount: 200, circle: 'Creators Circle', time: new Date(Date.now() - 2 * 60 * 60 * 1000), status: 'confirmed' },
   { id: 2, user: 'David Kim', action: 'Contributed', amount: 200, circle: 'Creators Circle', time: new Date(Date.now() - 4 * 60 * 60 * 1000), status: 'confirmed' },
