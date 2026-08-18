@@ -1,5 +1,6 @@
 "use client"
 
+import { PlusCircle } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
@@ -28,6 +29,7 @@ const navItems = [
   { icon: Award, label: 'Reputation', href: '/reputation' },
   { icon: Activity, label: 'Activity', href: '/activity' },
   { icon: Settings, label: 'Settings', href: '/settings' },
+  { icon: PlusCircle, label: 'Create Circle', href: '/circles/create', highlight: true },
 ]
 
 export function Sidebar({ open, setOpen }: SidebarProps) {
