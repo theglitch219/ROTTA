@@ -1,6 +1,7 @@
 "use client"
 
-import { useRouter } from 'next/navigation'
+import React from "react"
+import { useRouter } from "next/navigation"
 import { StatsCard } from '@/components/dashboard/stats-card'
 import { CircleCard } from '@/components/dashboard/circle-card'
 import { AIInsightCard } from '@/components/dashboard/ai-insight-card'
@@ -19,6 +20,7 @@ import { formatCurrency, formatRelativeTime } from '@/lib/utils'
 
 export default function DashboardPage() {
   const router = useRouter()
+  
   const recentActivities = [
     { user: 'Sarah Chen', action: 'contributed', amount: 200, circle: 'Creators Circle', time: '2h ago' },
     { user: 'David Kim', action: 'contributed', amount: 200, circle: 'Creators Circle', time: '4h ago' },
@@ -33,10 +35,10 @@ export default function DashboardPage() {
           <h1 className="text-2xl font-bold text-[#F5F7F5]">Good morning, Alex</h1>
           <p className="text-sm text-[#8C968F]">Here's your ROTTA overview</p>
         </div>
-        <Button className="bg-[#B6FF00] text-[#050705] hover:bg-[#B6FF00]/90" onClick={() => router.push('/circles/create')}>
-  <Plus className="mr-2 h-4 w-4" />
-  Create Circle
-</Button>
+        <Button 
+          className="bg-[#B6FF00] text-[#050705] hover:bg-[#B6FF00]/90"
+          onClick={() => router.push('/circles/create')}
+        >
           <Plus className="mr-2 h-4 w-4" />
           Create Circle
         </Button>
@@ -93,7 +95,12 @@ export default function DashboardPage() {
         <div className="lg:col-span-2 space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-semibold text-[#F5F7F5]">Active Circles</h2>
-            <Button variant="ghost" size="sm" className="text-[#B6FF00]">
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="text-[#B6FF00]"
+              onClick={() => router.push('/circles')}
+            >
               View All <ArrowRight className="ml-1 h-4 w-4" />
             </Button>
           </div>
@@ -109,6 +116,46 @@ export default function DashboardPage() {
                 contribution={circle.contribution}
                 nextPayout={circle.nextPayout}
                 status={circle.status as any}
+                yield={circle.yield}
+                cycle={circle.cycle}
+                totalCycles={circle.totalCycles}
+              />
+            ))}
+          </div>
+        </div>
+
+        <div className="space-y-4">
+          <h2 className="text-lg font-semibold text-[#F5F7F5]">Recent Activity</h2>
+          <Card className="border-[#B6FF00]/10">
+            <CardContent className="p-4 space-y-3">
+              {recentActivities.map((activity, i) => (
+                <div key={i} className="flex items-center gap-3 border-b border-[#B6FF00]/5 pb-3 last:border-0 last:pb-0">
+                  <div className="h-8 w-8 rounded-full bg-[#111A14] flex items-center justify-center">
+                    <span className="text-xs font-semibold text-[#8C968F]">
+                      {activity.user.charAt(0)}
+                    </span>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm text-[#F5F7F5]">
+                      <span className="font-medium">{activity.user}</span>
+                      {activity.action === 'contributed' && (
+                        <> contributed <span className="text-[#B6FF00]">${activity.amount}</span></>
+                      )}
+                      {activity.action === 'payout' && (
+                        <> received <span className="text-[#B6FF00]">${activity.amount}</span></>
+                      )}
+                    </p>
+                    <p className="text-xs text-[#8C968F]">{activity.circle} • {activity.time}</p>
+                  </div>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    </div>
+  )
+}                status={circle.status as any}
                 yield={circle.yield}
                 cycle={circle.cycle}
                 totalCycles={circle.totalCycles}
