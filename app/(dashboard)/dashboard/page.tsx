@@ -1,5 +1,6 @@
 "use client"
 
+import { useRouter } from 'next/navigation'
 import { StatsCard } from '@/components/dashboard/stats-card'
 import { CircleCard } from '@/components/dashboard/circle-card'
 import { AIInsightCard } from '@/components/dashboard/ai-insight-card'
@@ -17,6 +18,7 @@ import { demoUser, demoCircuits, demoAIRecommendations } from '@/lib/data/demo-d
 import { formatCurrency, formatRelativeTime } from '@/lib/utils'
 
 export default function DashboardPage() {
+  const router = useRouter()
   const recentActivities = [
     { user: 'Sarah Chen', action: 'contributed', amount: 200, circle: 'Creators Circle', time: '2h ago' },
     { user: 'David Kim', action: 'contributed', amount: 200, circle: 'Creators Circle', time: '4h ago' },
@@ -31,7 +33,10 @@ export default function DashboardPage() {
           <h1 className="text-2xl font-bold text-[#F5F7F5]">Good morning, Alex</h1>
           <p className="text-sm text-[#8C968F]">Here's your ROTTA overview</p>
         </div>
-        <Button className="bg-[#B6FF00] text-[#050705] hover:bg-[#B6FF00]/90">
+        <Button className="bg-[#B6FF00] text-[#050705] hover:bg-[#B6FF00]/90" onClick={() => router.push('/circles/create')}>
+  <Plus className="mr-2 h-4 w-4" />
+  Create Circle
+</Button>
           <Plus className="mr-2 h-4 w-4" />
           Create Circle
         </Button>
