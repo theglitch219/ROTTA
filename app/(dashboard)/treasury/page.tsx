@@ -1,5 +1,6 @@
 "use client"
 
+import React from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
@@ -59,7 +60,7 @@ export default function TreasuryPage() {
       <div className="grid gap-6 lg:grid-cols-3">
         <Card className="lg:col-span-2 border-[#B6FF00]/10">
           <CardHeader>
-            <CardTitle className="text-lg">Yield Positions</CardTitle>
+            <CardTitle className="text-lg text-[#F5F7F5]">Yield Positions</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
@@ -67,7 +68,7 @@ export default function TreasuryPage() {
                 <div key={i} className="flex items-center justify-between border-b border-[#B6FF00]/5 pb-4 last:border-0 last:pb-0">
                   <div>
                     <p className="font-medium text-[#F5F7F5]">{position.name}</p>
-                    <p className="text-sm text-[#8C968F]}>Capital: {formatCurrency(position.capital)}</p>
+                    <p className="text-sm text-[#8C968F]">Capital: {formatCurrency(position.capital)}</p>
                   </div>
                   <div className="text-right">
                     <p className="text-sm font-medium text-[#B6FF00]">{position.apy}% APY</p>
@@ -83,7 +84,7 @@ export default function TreasuryPage() {
 
         <Card className="border-[#B6FF00]/10">
           <CardHeader>
-            <CardTitle className="text-lg">Safety Buffer</CardTitle>
+            <CardTitle className="text-lg text-[#F5F7F5]">Safety Buffer</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
