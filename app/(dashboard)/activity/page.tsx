@@ -1,32 +1,49 @@
 "use client"
 
-import { Card, CardContent } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { formatRelativeTime } from '@/lib/utils'
-import { demoActivities } from '@/lib/data/demo-data'
-import { ArrowRight, Plus, Filter } from 'lucide-react'
+import { useState, useEffect } from "react"
+import { Card, CardContent } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { formatRelativeTime } from "@/lib/utils"
+import { RefreshCw, Filter } from "lucide-react"
+
+// Exten
+const initialActivities = [
+  { id: 1, user: 'Sarah Chen', action: 'Contributed', amount: 200, circle: 'Creators Circle', time: new Date(Date.now() - 2 * 60 * 60 * 1000), status: 'confirmed' },
+  { id: 2, user: 'David Kim', action: 'Contributed', amount: 200, circle: 'Creators Circle', time: new Date(Date.now() - 4 * 60 * 60 * 1000), status: 'confirmed' },
+  { id: 3, user: 'System', action: 'Payout', amount: 1000, circle: 'Builders Circle', time: new Date(Date.now() - 24 * 60 * 60 * 1000), status: 'confirmed' },
+  { id: 4, user: 'ROTTA AI', action: 'Recommendation', description: 'Liquidity optimization', circle: 'Creators Circle', time: new Date(Date.now() - 30 * 60 * 60 * 1000), status: 'pending' },
+  { id: 5, user: 'Maria Garcia', action: 'Joined', circle: 'Innovators Guild', time: new Date(Date.now() - 48 * 60 * 60 * 1000), status: 'confirmed' },
+]
 
 export default function ActivityPage() {
-  const activities = [
-    { user: 'Sarah Chen', action: 'Contributed', amount: 200, circle: 'Creators Circle', time: '2026-08-18T10:30:00Z' },
-    { user: 'David Kim', action: 'Contributed', amount: 200, circle: 'Creators Circle', time: '2026-08-18T09:15:00Z' },
-    { user: 'System', action: 'Payout', amount: 1000, circle: 'Builders Circle', time: '2026-08-17T14:00:00Z' },
-    { user: 'ROTTA AI', action: 'Recommendation', description: 'Liquidity optimization', circle: 'Creators Circle', time: '2026-08-17T11:00:00Z' },
-    { user: 'Maria Garcia', action: 'Joined', circle: 'Innovators Guild', time: '2026-08-16T16:45:00Z' },
-  ]
+  const [activities, setActivities] = useState(initialActivities)
+  const [refreshing, setRefreshing] = useState(false)
+
+  const handleRefresh = () => {
+    setRefreshing(true)
+    setTimeout(() => {
+      // Add a new activity
+      setActivities(prev => [{
+        id: Date.now(),
+        user: 'System',
+        action: 'Update',
+        description: 'New contribution recorded',
+        circle: 'Innovators Guild',
+        time: new Date(),
+        status: 'confirmed'
+      }, ...prev])
+      setRefreshing(false)
+    }, 1000)
+  }
 
   const getActionIcon = (action: string) => {
     switch (action) {
-      case 'Contributed':
-        return '💰'
-      case 'Payout':
-        return '💸'
-      case 'Recommendation':
-        return '🤖'
-      case 'Joined':
-        return '👋'
-      default:
-        return '📌'
+      case 'Contributed': return '💰'
+      case 'Payout': return '💸'
+      case 'Recommendation': return '🤖'
+      case 'Joined': return '👋'
+      default: return '📌'
     }
   }
 
@@ -37,20 +54,24 @@ export default function ActivityPage() {
           <h1 className="text-2xl font-bold text-[#F5F7F5]">Activity</h1>
           <p className="text-sm text-[#8C968F]">All activity across your circles</p>
         </div>
-        <Badge variant="outline" className="gap-1">
-          <span className="h-1.5 w-1.5 rounded-full bg-[#79D900]"></span>
-          Live
-        </Badge>
+        <div className="flex gap-2">
+          <Button variant="secondary" size="sm" onClick={handleRefresh} disabled={refreshing}>
+            <RefreshCw className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} />
+          </Button>
+          <Button variant="secondary" size="sm">
+            <Filter className="h-4 w-4" />
+          </Button>
+        </div>
       </div>
 
       <div className="space-y-3">
-        {activities.map((activity, i) => (
-          <Card key={i} className="border-[#B6FF00]/10 hover:border-[#B6FF00]/30 transition-all">
+        {activities.map((activity) => (
+          <Card key={activity.id} className="border-[#B6FF00]/10 hover:border-[#B6FF00]/30 transition-all">
             <CardContent className="p-4">
               <div className="flex items-start gap-4">
                 <div className="text-2xl">{getActionIcon(activity.action)}</div>
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 flex-wrap">
                     <span className="font-medium text-[#F5F7F5]">{activity.user}</span>
                     <span className="text-sm text-[#8C968F]">{activity.action}</span>
                     {activity.amount && (
@@ -66,7 +87,9 @@ export default function ActivityPage() {
                     <span className="text-xs text-[#8C968F]">{formatRelativeTime(activity.time)}</span>
                   </div>
                 </div>
-                <Badge variant="secondary" className="text-xs">Confirmed</Badge>
+                <Badge variant={activity.status === 'confirmed' ? 'success' : 'warning'}>
+                  {activity.status}
+                </Badge>
               </div>
             </CardContent>
           </Card>
@@ -74,4 +97,4 @@ export default function ActivityPage() {
       </div>
     </div>
   )
-}
+        }
